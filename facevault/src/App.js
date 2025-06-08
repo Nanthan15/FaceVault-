@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Login from './pages/login';
 import Register from './pages/register';
+import CheckPage from './pages/check';
 import Home from './pages/home';
 
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/check" element={<CheckPage />} />
         </Routes>
       </div>
     </Router>
