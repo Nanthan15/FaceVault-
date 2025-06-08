@@ -9,7 +9,8 @@ const files = [
     cid: "QmAAA...1111",
     size: "2.1 MB",
     fileType: "PDF",
-    modified: "1 day ago",
+    sentBy: "Alice Johnson",
+    sentDate: "2024-06-10",
   },
   {
     name: "Photo.jpg",
@@ -17,7 +18,8 @@ const files = [
     cid: "QmBBB...2222",
     size: "1.5 MB",
     fileType: "JPG",
-    modified: "2 days ago",
+    sentBy: "Bob Smith",
+    sentDate: "2024-06-09",
   },
   {
     name: "Notes.txt",
@@ -25,7 +27,8 @@ const files = [
     cid: "QmCCC...3333",
     size: "12 KB",
     fileType: "TXT",
-    modified: "3 days ago",
+    sentBy: "Carol Lee",
+    sentDate: "2024-06-08",
   },
 ];
 
@@ -256,25 +259,26 @@ export default function ReceiveFilesPage() {
           }}>
             <thead style={{ background: dark ? "#23262f" : "#f5f6fa" }}>
               <tr>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>File Name</th>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>CID</th>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Size</th>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>File Type</th>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Last Modified</th>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Decrypt</th>
+                <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>File Name</th>
+                <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>CID</th>
+                <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Size</th>
+                <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>File Type</th>
+                <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Sent By</th>
+                <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Sent Date</th>
+                <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Action</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
               {files.map((file, idx) => (
                 <tr key={idx} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                  <td style={{ padding: "14px 18px", fontWeight: 500 }}>
+                  <td style={{ padding: "14px 18px", fontWeight: 500, textAlign: "center" }}>
                     <span style={{ marginRight: 10 }}>{iconForType(file.type)}</span>
                     {file.name}
                   </td>
-                  <td style={{ padding: "14px 18px", color: dark ? "#bbb" : "#888" }}>{file.cid}</td>
-                  <td style={{ padding: "14px 18px" }}>{file.size}</td>
-                  <td style={{ padding: "14px 18px" }}>
+                  <td style={{ padding: "14px 18px", color: dark ? "#bbb" : "#888", textAlign: "center" }}>{file.cid}</td>
+                  <td style={{ padding: "14px 18px", textAlign: "center" }}>{file.size}</td>
+                  <td style={{ padding: "14px 18px", textAlign: "center" }}>
                     <span style={{
                       display: "inline-block",
                       background: "#edeaff",
@@ -285,26 +289,44 @@ export default function ReceiveFilesPage() {
                       fontWeight: 600
                     }}>{file.fileType}</span>
                   </td>
-                  <td style={{ padding: "14px 18px", color: dark ? "#bbb" : "#888" }}>{file.modified}</td>
-                  <td style={{ padding: "14px 18px" }}>
+                  <td style={{ padding: "14px 18px", textAlign: "center" }}>{file.sentBy}</td>
+                  <td style={{ padding: "14px 18px", textAlign: "center" }}>{file.sentDate}</td>
+                  <td style={{ padding: "14px 18px", textAlign: "center" }}>
                     <button
                       style={{
                         background: "#1ed760",
                         color: dark ? "#23262f" : "#fff",
                         border: "none",
                         borderRadius: 6,
-                        padding: "6px 18px",
+                        padding: "6px 14px",
                         fontWeight: 600,
-                        fontSize: 14,
+                        fontSize: 16,
+                        cursor: "pointer",
+                        marginRight: 8,
+                        boxShadow: "0 1px 4px #0001"
+                      }}
+                      title="Accept"
+                      onClick={() => setShowModal(true)}
+                    >✔️</button>
+                    <button
+                      style={{
+                        background: "#ff4d4f",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: 6,
+                        padding: "6px 14px",
+                        fontWeight: 600,
+                        fontSize: 16,
                         cursor: "pointer",
                         boxShadow: "0 1px 4px #0001"
                       }}
-                      onClick={() => setShowModal(true)}
-                    >Decrypt</button>
+                      title="Reject"
+                      onClick={() => alert("Rejected")}
+                    >❌</button>
                   </td>
-                  <td style={{ padding: "14px 18px" }}>
+                  {/* <td style={{ padding: "14px 18px" }}>
                     <span style={{ fontSize: 22, cursor: "pointer" }}>⋮</span>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>
