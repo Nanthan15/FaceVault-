@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../components/sidebar";
 import Header from "../components/header";
 
@@ -102,33 +102,40 @@ const iconForType = (type) => {
 };
 
 export default function CheckPage() {
+  const [dark, setDark] = useState(false);
+
   return (
-    <div style={{ display: "flex", height: "100vh", background: "#f7f8fa" }}>
-      <Sidebar />
-      <main style={{ flex: 1, margin: 16, marginLeft: 0, display: "flex", flexDirection: "column" }}>
-        <Header />
+    <div
+      className={dark ? "dark-theme" : ""}
+      style={{
+        display: "flex",
+        height: "100vh",
+        background: dark ? "#181a20" : "#f7f8fa",
+        color: dark ? "#f7f8fa" : "#222",
+        transition: "background 0.3s, color 0.3s",
+      }}
+    >
+      <Sidebar dark={dark} />
+      <main
+        style={{
+          flex: 1,
+          margin: 16,
+          marginLeft: 0,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Header onToggleTheme={() => setDark((d) => !d)} />
         {/* Folders */}
-        <section style={{ display: "flex", gap: 18, marginBottom: 32 }}>
-          <div style={{
-            background: "#f5faf5",
-            borderRadius: 12,
-            width: 140,
-            height: 90,
+        <section
+          style={{
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            fontWeight: 600,
-            fontSize: 18,
-            color: "#222",
-            border: "2px dashed #d0e8d0",
-            cursor: "pointer"
-          }}>
-            <span style={{ fontSize: 32, marginBottom: 6 }}>+</span>
-            Create folder
-          </div>
-          {folders.map((f, i) => (
-            <div key={i} style={{
+            gap: 18,
+            marginBottom: 32,
+          }}
+        >
+          <div
+            style={{
               background: "#f5faf5",
               borderRadius: 12,
               width: 140,
@@ -140,29 +147,111 @@ export default function CheckPage() {
               fontWeight: 600,
               fontSize: 18,
               color: "#222",
-              cursor: "pointer"
-            }}>
+              border: "2px dashed #d0e8d0",
+              cursor: "pointer",
+            }}
+          >
+            <span style={{ fontSize: 32, marginBottom: 6 }}>+</span>
+            Create folder
+          </div>
+          {folders.map((f, i) => (
+            <div
+              key={i}
+              style={{
+                background: "#f5faf5",
+                borderRadius: 12,
+                width: 140,
+                height: 90,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: 600,
+                fontSize: 18,
+                color: "#222",
+                cursor: "pointer",
+              }}
+            >
               <span style={{ fontSize: 32, marginBottom: 6 }}>📁</span>
               {f.name}
             </div>
           ))}
         </section>
         {/* Files Table */}
-        <section style={{
-          background: "#fff",
-          borderRadius: 14,
-          boxShadow: "0 2px 8px #0001",
-          padding: 0,
-          overflow: "hidden"
-        }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <section
+          style={{
+            background: dark ? "#23262f" : "#fff",
+            borderRadius: 14,
+            boxShadow: "0 2px 8px #0001",
+            padding: 0,
+            overflow: "hidden",
+            transition: "background 0.3s",
+          }}
+        >
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              color: dark ? "#f7f8fa" : "#222",
+            }}
+          >
             <thead style={{ background: "#f5f6fa" }}>
               <tr>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15, color: "#444" }}>File Name</th>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15, color: "#444" }}>CID</th>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15, color: "#444" }}>Size</th>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15, color: "#444" }}>File Type</th>
-                <th style={{ textAlign: "left", padding: "14px 18px", fontWeight: 600, fontSize: 15, color: "#444" }}>Last Modified</th>
+                <th
+                  style={{
+                    textAlign: "left",
+                    padding: "14px 18px",
+                    fontWeight: 600,
+                    fontSize: 15,
+                    color: "#444",
+                  }}
+                >
+                  File Name
+                </th>
+                <th
+                  style={{
+                    textAlign: "left",
+                    padding: "14px 18px",
+                    fontWeight: 600,
+                    fontSize: 15,
+                    color: "#444",
+                  }}
+                >
+                  CID
+                </th>
+                <th
+                  style={{
+                    textAlign: "left",
+                    padding: "14px 18px",
+                    fontWeight: 600,
+                    fontSize: 15,
+                    color: "#444",
+                  }}
+                >
+                  Size
+                </th>
+                <th
+                  style={{
+                    textAlign: "left",
+                    padding: "14px 18px",
+                    fontWeight: 600,
+                    fontSize: 15,
+                    color: "#444",
+                  }}
+                >
+                  File Type
+                </th>
+                <th
+                  style={{
+                    textAlign: "left",
+                    padding: "14px 18px",
+                    fontWeight: 600,
+                    fontSize: 15,
+                    color: "#444",
+                  }}
+                >
+                  Last Modified
+                </th>
                 <th></th>
               </tr>
             </thead>
@@ -176,17 +265,25 @@ export default function CheckPage() {
                   <td style={{ padding: "14px 18px", color: "#888" }}>{file.cid}</td>
                   <td style={{ padding: "14px 18px" }}>{file.size}</td>
                   <td style={{ padding: "14px 18px" }}>
-                    <span style={{
-                      display: "inline-block",
-                      background: file.fileType === "Encrypted" ? "#e6e6ff" : "#e6ffe6",
-                      color: file.fileType === "Encrypted" ? "#5a4fff" : "#1ed760",
-                      borderRadius: 8,
-                      padding: "2px 10px",
-                      fontSize: 13,
-                      fontWeight: 600
-                    }}>{file.fileType}</span>
+                    <span
+                      style={{
+                        display: "inline-block",
+                        background:
+                          file.fileType === "Encrypted" ? "#e6e6ff" : "#e6ffe6",
+                        color:
+                          file.fileType === "Encrypted" ? "#5a4fff" : "#1ed760",
+                        borderRadius: 8,
+                        padding: "2px 10px",
+                        fontSize: 13,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {file.fileType}
+                    </span>
                   </td>
-                  <td style={{ padding: "14px 18px", color: "#888" }}>{file.modified}</td>
+                  <td style={{ padding: "14px 18px", color: "#888" }}>
+                    {file.modified}
+                  </td>
                   <td style={{ padding: "14px 18px" }}>
                     <span style={{ fontSize: 22, cursor: "pointer" }}>⋮</span>
                   </td>
@@ -196,6 +293,31 @@ export default function CheckPage() {
           </table>
         </section>
       </main>
+      {/* Dark theme global styles */}
+      <style>
+        {`
+          .dark-theme {
+            background: #181a20 !important;
+            color: #f7f8fa !important;
+          }
+          .dark-theme input, .dark-theme textarea {
+            background: #23262f !important;
+            color: #f7f8fa !important;
+            border-color: #333 !important;
+          }
+          .dark-theme table {
+            background: #23262f !important;
+            color: #f7f8fa !important;
+          }
+          .dark-theme th, .dark-theme td {
+            background: #23262f !important;
+            color: #f7f8fa !important;
+          }
+          .dark-theme section {
+            background: #23262f !important;
+          }
+        `}
+      </style>
     </div>
   );
 }

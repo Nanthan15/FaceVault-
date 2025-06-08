@@ -7,6 +7,7 @@ import Login from './pages/login';
 import Register from './pages/register';
 import CheckPage from './pages/check';
 import Home from './pages/home';
+import VaultPage from './pages/vault';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/check" element={<CheckPage />} />
+          <Route path="/vault" element={<VaultPage />} />
         </Routes>
       </div>
     </Router>
