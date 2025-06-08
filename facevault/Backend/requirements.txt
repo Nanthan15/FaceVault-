@@ -1,0 +1,8 @@
+flask
+pymongo
+boto3
+face_recognition
+opencv-python
+cryptography
+bcrypt
+python-dotenv
