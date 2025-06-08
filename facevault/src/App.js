@@ -10,6 +10,7 @@ import Home from './pages/home';
 import ReceiveFilesPage from './pages/receive';
 import VaultPage from './pages/vault';
 import SendFileModal from './pages/share';
+import ConnectionPage from './pages/connection';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/vault" element={<VaultPage />} />
           <Route path="/receive" element={<ReceiveFilesPage />} />
           <Route path="/send" element={<SendFileModal />} />
+          <Route path="/connection" element={<ConnectionPage />} />
         </Routes>
       </div>
     </Router>

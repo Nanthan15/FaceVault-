@@ -8,10 +8,10 @@ export default function Sidebar({ dark }) {
   const navItems = [
     { label: "Home page", href: "/check" },
     { label: "Vault", href: "/vault" },
-    { label: "Add Connection" },
+    { label: "Add Connection", href: "/connection" },
     { label: "Share Files", href: "/send" },
     { label: "Receive Files", href: "/receive" },
-    { label: "Api key" }
+    {label: "Logout", href: "/" },
   ];
 
   return (

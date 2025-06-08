@@ -294,31 +294,31 @@ export default function ReceiveFilesPage() {
                   <td style={{ padding: "14px 18px", textAlign: "center" }}>
                     <button
                       style={{
-                        background: "#1ed760",
-                        color: dark ? "#23262f" : "#fff",
+                        background: "none",
                         border: "none",
-                        borderRadius: 6,
-                        padding: "6px 14px",
-                        fontWeight: 600,
-                        fontSize: 16,
+                        outline: "none",
+                        borderRadius: "50%",
+                        padding: "6px 10px",
+                        fontSize: 22,
                         cursor: "pointer",
                         marginRight: 8,
-                        boxShadow: "0 1px 4px #0001"
+                        color: "#1ed760",
+                        transition: "background 0.2s"
                       }}
                       title="Accept"
                       onClick={() => setShowModal(true)}
                     >✔️</button>
                     <button
                       style={{
-                        background: "#ff4d4f",
-                        color: "#fff",
+                        background: "none",
                         border: "none",
-                        borderRadius: 6,
-                        padding: "6px 14px",
-                        fontWeight: 600,
-                        fontSize: 16,
+                        outline: "none",
+                        borderRadius: "50%",
+                        padding: "6px 10px",
+                        fontSize: 22,
                         cursor: "pointer",
-                        boxShadow: "0 1px 4px #0001"
+                        color: "#ff4d4f",
+                        transition: "background 0.2s"
                       }}
                       title="Reject"
                       onClick={() => alert("Rejected")}
