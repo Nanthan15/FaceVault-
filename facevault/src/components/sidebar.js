@@ -1,5 +1,6 @@
 import React from "react";
 import CheckPage from "../pages/check";
+import { href } from "react-router-dom";
 
 export default function Sidebar({ dark }) {
   const pathname = window.location.pathname;
@@ -8,8 +9,8 @@ export default function Sidebar({ dark }) {
     { label: "Home page", href: "/check" },
     { label: "Vault", href: "/vault" },
     { label: "Add Connection" },
-    { label: "Share Files" },
-    { label: "Receive Files" },
+    { label: "Share Files", href: "/send" },
+    { label: "Receive Files", href: "/receive" },
     { label: "Api key" }
   ];
 
