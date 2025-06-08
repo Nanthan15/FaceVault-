@@ -19,10 +19,10 @@ function App() {
       <div className="App">
         
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/check" element={<CheckPage />} />
+          <Route path="/" element={<CheckPage />} />
           <Route path="/vault" element={<VaultPage />} />
           <Route path="/receive" element={<ReceiveFilesPage />} />
           <Route path="/send" element={<SendFileModal />} />

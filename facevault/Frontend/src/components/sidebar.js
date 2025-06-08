@@ -6,12 +6,12 @@ export default function Sidebar({ dark }) {
   const pathname = window.location.pathname;
 
   const navItems = [
-    { label: "Home page", href: "/check" },
+    { label: "Home page", href: "/" },
     { label: "Vault", href: "/vault" },
     { label: "Add Connection", href: "/connection" },
     { label: "Share Files", href: "/send" },
     { label: "Receive Files", href: "/receive" },
-    {label: "Logout", href: "/" },
+    {label: "Logout", href: "/home" },
   ];
 
   return (
