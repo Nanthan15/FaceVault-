@@ -10,11 +10,42 @@ export default function Register() {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    // Handle registration logic here
-    // You can use the `photo` state as the user's photo
-  };
+
+    if (!photo) {
+      alert('Please capture a photo.');
+      return;
+    }
+
+    // Convert base64 image to Blob
+    const blob = await (await fetch(photo)).blob();
+
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('photo', blob, 'photo.png');
+
+    try {
+      const response = await fetch('http://localhost:5000/auth/register', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Registration successful!');
+        // Optionally redirect or clear form
+      } else {
+        alert(data.error || 'Registration failed');
+      }
+    } catch (err) {
+      alert('Error connecting to server');
+    }
+     
+    };
 
   const handleOpenCamera = async () => {
     setShowCamera(true);

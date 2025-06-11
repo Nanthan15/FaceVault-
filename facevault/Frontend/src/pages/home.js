@@ -21,6 +21,13 @@ const features = [
 ];
 
 export default function Home() {
+  React.useEffect(() => {
+    const userEmail = localStorage.getItem("facevault_email") || "";
+    if (!userEmail) {
+      window.location.href = "/login";
+    }
+  }, []);
+
   return (
     <div style={styles.bg}>
       <Navbar />

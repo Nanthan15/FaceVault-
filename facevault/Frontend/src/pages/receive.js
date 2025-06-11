@@ -222,6 +222,13 @@ const iconForType = (type) => {
 export default function ReceiveFilesPage() {
   const [dark, setDark] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const userEmail = localStorage.getItem("facevault_email") || "";
+
+  React.useEffect(() => {
+    if (!userEmail) {
+      window.location.href = "/login";
+    }
+  }, [userEmail]);
 
   return (
     <div

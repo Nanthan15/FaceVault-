@@ -6,13 +6,13 @@ export default function Login() {
   const [showCamera, setShowCamera] = useState(false);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    // Handle login logic here
-  };
+  const canvasRef = useRef(null);
 
   const handleFaceRecognition = async () => {
+    if (!email || !password) {
+      alert('Please enter email and password first.');
+      return;
+    }
     setShowCamera(true);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -26,6 +26,42 @@ export default function Login() {
     }
   };
 
+  const handleCaptureAndLogin = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+    let canvas = canvasRef.current;
+    if (!canvas) return;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageData = canvas.toDataURL('image/png');
+    const blob = await (await fetch(imageData)).blob();
+
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('photo', blob, 'photo.png');
+
+    try {
+      const response = await fetch('http://localhost:5000/auth/login', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (response.ok) {
+        // Save email to localStorage
+        localStorage.setItem("facevault_email", email);
+        handleCloseCamera();
+        window.location.href = '/';
+      } else {
+        alert(data.error || 'Login failed');
+      }
+    } catch (err) {
+      alert('Error connecting to server');
+    }
+  };
+
   const handleCloseCamera = () => {
     setShowCamera(false);
     if (streamRef.current) {
@@ -36,7 +72,7 @@ export default function Login() {
 
   return (
     <div style={styles.container}>
-      <form style={styles.form} onSubmit={handleSubmit}>
+      <form style={styles.form} onSubmit={e => e.preventDefault()}>
         <h2 style={styles.title}>Sign in to FaceVault</h2>
         <div style={styles.inputGroup}>
           <label style={styles.label} htmlFor="email">Email</label>
@@ -86,6 +122,10 @@ export default function Login() {
               width={640}
               height={480}
             />
+            <canvas ref={canvasRef} style={{ display: 'none' }} />
+            <button style={styles.faceButton} onClick={handleCaptureAndLogin}>
+              Capture & Login
+            </button>
             <button style={styles.closeButton} onClick={handleCloseCamera}>
               Close
             </button>

@@ -1,10 +1,15 @@
 import React, { useRef, useState } from "react";
 
-export default function UploadModal({ onClose }) {
+export default function UploadModal({ onClose, onUploadSuccess, userEmail }) {
   const [file, setFile] = useState(null);
   const [folder, setFolder] = useState(null);
   const [captured, setCaptured] = useState(null);
   const [streaming, setStreaming] = useState(false);
+  const [cid, setCid] = useState("");
+  const [fileType, setFileType] = useState("");
+  const [size, setSize] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const videoRef = useRef();
   const canvasRef = useRef();
 
@@ -37,6 +42,107 @@ export default function UploadModal({ onClose }) {
       videoRef.current.srcObject.getTracks().forEach(track => track.stop());
     }
     onClose();
+  };
+
+  // Handle file selection (clear folder and update UI)
+  const handleFileChange = (e) => {
+    const f = e.target.files[0];
+    setFile(f);
+    setFolder(null);
+    document.getElementById("folder-upload").value = "";
+    if (f) {
+      // Auto-detect file type by extension if MIME is empty
+      let ext = f.name.split('.').pop().toLowerCase();
+      let type = f.type || ext;
+      setFileType(type);
+      setSize(f.size ? `${(f.size / 1024).toFixed(1)} KB` : "");
+    } else {
+      setFileType("");
+      setSize("");
+    }
+  };
+
+  // Handle folder selection (clear file and update UI)
+  const handleFolderChange = (e) => {
+    const filesArr = e.target.files;
+    const arr = filesArr && filesArr.length > 0 ? Array.from(filesArr) : null;
+    setFolder(arr);
+    setFile(null);
+    document.getElementById("file-upload").value = "";
+    if (arr && arr.length > 0) {
+      setFileType("Folder");
+      setSize("");
+    } else {
+      setFileType("");
+      setSize("");
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    // Only one of file or folder must be selected, and face must be captured, and cid and fileType must be filled
+    const hasFile = !!file;
+    const hasFolder = Array.isArray(folder) && folder.length > 0;
+    // Debug log to help you see what is missing
+    // Remove/comment out in production
+    if (!(hasFile || hasFolder)) console.log("No file or folder selected");
+    if (!captured) console.log("No face captured");
+    if (!cid) console.log("No CID");
+    if (!fileType) console.log("No fileType");
+    if (!( (hasFile || hasFolder) && captured && cid && fileType )) {
+      setError("All fields are required.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("email", userEmail);
+      if (hasFile) {
+        formData.append("file", file);
+        formData.append("size", size);
+      } else if (hasFolder) {
+        for (let i = 0; i < folder.length; i++) {
+          formData.append("file", folder[i]);
+        }
+        formData.append("size", "");
+      }
+      formData.append("cid", cid);
+      formData.append("fileType", fileType);
+      // Add face image as 'photo'
+      if (captured) {
+        const arr = captured.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while(n--) u8arr[n] = bstr.charCodeAt(n);
+        const faceBlob = new Blob([u8arr], {type: mime});
+        formData.append("photo", faceBlob, "face.png");
+      }
+
+      const res = await fetch("/vault/upload", {
+        method: "POST",
+        body: formData,
+      });
+      if (res.ok) {
+        if (onUploadSuccess) onUploadSuccess();
+        onClose();
+      } else {
+        // Check if response is JSON before parsing
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await res.json();
+          setError(data.error || "Upload failed");
+        } else {
+          setError("Upload failed (server error or not found)");
+        }
+      }
+    } catch (e) {
+      setError("Upload failed");
+      console.error(e);
+    }
+    setLoading(false);
   };
 
   return (
@@ -131,7 +237,7 @@ export default function UploadModal({ onClose }) {
               id="file-upload"
               type="file"
               style={{ display: "none" }}
-              onChange={e => setFile(e.target.files[0])}
+              onChange={handleFileChange}
             />
             <label
               htmlFor="folder-upload"
@@ -154,10 +260,52 @@ export default function UploadModal({ onClose }) {
               webkitdirectory="true"
               directory="true"
               style={{ display: "none" }}
-              onChange={e => setFolder(e.target.files)}
+              onChange={handleFolderChange}
             />
-            {file && <div style={{ marginTop: 10, color: "#444", fontSize: 14 }}>📄 {file.name}</div>}
-            {folder && folder.length > 0 && <div style={{ marginTop: 10, color: "#444", fontSize: 14 }}>📁 {folder[0].webkitRelativePath.split('/')[0]}</div>}
+            {file && (
+              <div style={{ marginTop: 10, color: "#444", fontSize: 14 }}>
+                📄 {file.name}
+              </div>
+            )}
+            {folder && folder.length > 0 && (
+              <div style={{ marginTop: 10, color: "#444", fontSize: 14 }}>
+                📁 {folder[0].webkitRelativePath
+                  ? folder[0].webkitRelativePath.split('/')[0]
+                  : folder[0].name}
+              </div>
+            )}
+            {/* CID input */}
+            <input
+              type="text"
+              placeholder="CID (from S3/IPFS)"
+              value={cid}
+              onChange={e => setCid(e.target.value)}
+              style={{
+                marginTop: 16,
+                width: "100%",
+                padding: "10px 12px",
+                borderRadius: 8,
+                border: "1px solid #ccc",
+                fontSize: 15,
+                outline: "none"
+              }}
+            />
+            {/* File Type input (auto-filled, editable) */}
+            <input
+              type="text"
+              placeholder="File Type (e.g. pdf, docx, png, Folder)"
+              value={fileType}
+              onChange={e => setFileType(e.target.value)}
+              style={{
+                marginTop: 12,
+                width: "100%",
+                padding: "10px 12px",
+                borderRadius: 8,
+                border: "1px solid #ccc",
+                fontSize: 15,
+                outline: "none"
+              }}
+            />
           </div>
           {/* Face Recognition */}
           <div style={{
@@ -247,10 +395,14 @@ export default function UploadModal({ onClose }) {
               letterSpacing: 1
             }}
             disabled={!( (file || (folder && folder.length > 0)) && captured )}
+            onClick={handleSubmit}
           >
-            Encrypt
+            {loading ? "Uploading..." : "Encrypt"}
           </button>
         </div>
+        {error && (
+          <div style={{ color: "red", fontSize: 14, textAlign: "center", marginTop: 12 }}>{error}</div>
+        )}
       </div>
       {/* Keyframes for pop-in animation */}
       <style>

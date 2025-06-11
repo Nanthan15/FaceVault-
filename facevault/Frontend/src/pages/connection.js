@@ -157,6 +157,13 @@ export default function ConnectionPage() {
   const [showNotify, setShowNotify] = useState(false);
   const [notifyMsg, setNotifyMsg] = useState("");
   const [showAccept, setShowAccept] = useState(false);
+  const userEmail = localStorage.getItem("facevault_email") || "";
+
+  React.useEffect(() => {
+    if (!userEmail) {
+      window.location.href = "/login";
+    }
+  }, [userEmail]);
 
   return (
     <div
