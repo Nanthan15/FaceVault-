@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Sidebar from "../components/sidebar";
 import Header from "../components/header";
 
@@ -265,12 +265,27 @@ function SendFileModal({ onClose }) {
 export default function ShareFilesPage() {
   const [dark, setDark] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [connections, setConnections] = useState([]);
   const userEmail = localStorage.getItem("facevault_email") || "";
+  const [currentUserId, setCurrentUserId] = useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!userEmail) {
       window.location.href = "/login";
+      return;
     }
+    // Fetch current user to get their _id
+    fetch(`/connections/api/user-by-email?email=${encodeURIComponent(userEmail)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.user && data.user._id) {
+          setCurrentUserId(data.user._id);
+          // Fetch connections
+          fetch(`/connections/api/connections/${data.user._id}`)
+            .then(res2 => res2.json())
+            .then(data2 => setConnections(data2.connections || []));
+        }
+      });
   }, [userEmail]);
 
   return (
@@ -305,17 +320,17 @@ export default function ShareFilesPage() {
                 <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>User ID</th>
                 <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Name</th>
                 <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Role</th>
-                <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Connection Date</th>
+                <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Company</th>
                 <th style={{ textAlign: "center", padding: "14px 18px", fontWeight: 600, fontSize: 15 }}>Send File</th>
               </tr>
             </thead>
             <tbody>
-              {users.map((user, idx) => (
-                <tr key={idx} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                  <td style={{ padding: "14px 18px", fontWeight: 500, textAlign: "center" }}>{user.id}</td>
-                  <td style={{ padding: "14px 18px", textAlign: "center" }}>{user.name}</td>
+              {connections.map((user, idx) => (
+                <tr key={user._id} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                  <td style={{ padding: "14px 18px", fontWeight: 500, textAlign: "center" }}>{user._id}</td>
+                  <td style={{ padding: "14px 18px", textAlign: "center" }}>{user.username}</td>
                   <td style={{ padding: "14px 18px", textAlign: "center" }}>{user.role}</td>
-                  <td style={{ padding: "14px 18px", textAlign: "center" }}>{user.date}</td>
+                  <td style={{ padding: "14px 18px", textAlign: "center" }}>{user.company}</td>
                   <td style={{ padding: "14px 18px", textAlign: "center" }}>
                     <button
                       style={{

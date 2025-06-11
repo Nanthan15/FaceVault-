@@ -16,9 +16,11 @@ def register():
     username = request.form.get('username')
     password = request.form.get('password')
     email = request.form.get('email')
+    role = request.form.get('role')
+    company = request.form.get('company')
     photo = request.files.get('photo')
 
-    if not username or not password or not email or not photo:
+    if not username or not password or not email or not role or not company or not photo:
         return jsonify({'error': 'Missing fields'}), 400
 
     if users.find_one({'username': username}):
@@ -39,6 +41,8 @@ def register():
         "username": username,
         "email": email,
         "password": hashed_password,
+        "role": role,
+        "company": company,
         "face_encoding": encoding.tolist()
     })
     return jsonify({'message': 'User registered successfully'}), 201

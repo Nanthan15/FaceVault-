@@ -4,6 +4,8 @@ export default function Register() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
+  const [company, setCompany] = useState('');
   const [showCamera, setShowCamera] = useState(false);
   const [photo, setPhoto] = useState(null);
   const videoRef = useRef(null);
@@ -25,6 +27,8 @@ export default function Register() {
     formData.append('username', username);
     formData.append('email', email);
     formData.append('password', password);
+    formData.append('role', role);
+    formData.append('company', company);
     formData.append('photo', blob, 'photo.png');
 
     try {
@@ -85,60 +89,91 @@ export default function Register() {
 
   return (
     <div style={styles.container}>
+      <br />
       <form style={styles.form} onSubmit={handleSubmit}>
         <h2 style={styles.title}>Register for FaceVault</h2>
-        <div style={styles.inputGroup}>
-          <label style={styles.label} htmlFor="username">Username</label>
-          <input
-            style={styles.input}
-            type="text"
-            id="username"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            required
-            placeholder="Enter username"
-          />
-        </div>
-        <div style={styles.inputGroup}>
-          <label style={styles.label} htmlFor="email">Email</label>
-          <input
-            style={styles.input}
-            type="email"
-            id="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            placeholder="you@example.com"
-          />
-        </div>
-        <div style={styles.inputGroup}>
-          <label style={styles.label} htmlFor="password">Password</label>
-          <input
-            style={styles.input}
-            type="password"
-            id="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            placeholder="Create a password"
-          />
-        </div>
-        <div style={styles.inputGroup}>
-          <label style={styles.label}>Photo</label>
-          <button
-            type="button"
-            style={styles.faceButton}
-            onClick={handleOpenCamera}
-          >
-            {photo ? 'Retake Photo' : 'Capture Photo'}
-          </button>
-          {photo && (
-            <img
-              src={photo}
-              alt="Captured"
-              style={styles.photoPreview}
+        <div style={styles.row}>
+          <div style={styles.inputGroup}>
+            <label style={styles.label} htmlFor="username">Username</label>
+            <input
+              style={styles.input}
+              type="text"
+              id="username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              required
+              placeholder="Enter username"
             />
-          )}
+          </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label} htmlFor="email">Email</label>
+            <input
+              style={styles.input}
+              type="email"
+              id="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              placeholder="you@example.com"
+            />
+          </div>
+        </div>
+        <div style={styles.row}>
+          <div style={styles.inputGroup}>
+            <label style={styles.label} htmlFor="password">Password</label>
+            <input
+              style={styles.input}
+              type="password"
+              id="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              placeholder="Create a password"
+            />
+          </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label} htmlFor="role">Role</label>
+            <input
+              style={styles.input}
+              type="text"
+              id="role"
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              required
+              placeholder="e.g. Manager, Developer"
+            />
+          </div>
+        </div>
+        <div style={styles.row}>
+          <div style={styles.inputGroup}>
+            <label style={styles.label} htmlFor="company">Company</label>
+            <input
+              style={styles.input}
+              type="text"
+              id="company"
+              value={company}
+              onChange={e => setCompany(e.target.value)}
+              required
+              placeholder="e.g. Acme Corp"
+            />
+          </div>
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Photo</label>
+            <button
+              type="button"
+              style={styles.faceButton}
+              onClick={handleOpenCamera}
+            >
+              {photo ? 'Retake Photo' : 'Capture Photo'}
+            </button>
+            {photo && (
+              <img
+                src={photo}
+                alt="Captured"
+                style={styles.photoPreview}
+              />
+            )}
+          </div>
         </div>
         <button style={styles.button} type="submit">Register</button>
       </form>
@@ -182,7 +217,7 @@ const styles = {
     borderRadius: '1rem',
     boxShadow: '0 8px 32px rgba(0,0,0,0.15)',
     minWidth: '420px',
-    maxWidth: '550px',
+    maxWidth: '600px',
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -192,26 +227,33 @@ const styles = {
     margin: 0,
     color: '#18181b',
     fontWeight: 700,
-    fontSize: '2rem',
+    fontSize: '1.3rem',
     textAlign: 'center',
     letterSpacing: '1px',
+  },
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '1.2rem',
+    width: '100%',
   },
   inputGroup: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.3rem',
+    gap: '0.2rem',
+    flex: 1,
   },
   label: {
     fontWeight: 500,
     color: '#6366f1',
-    fontSize: '20px',
-    marginBottom: '0.2rem',
+    fontSize: '15px',
+    marginBottom: '0.1rem',
   },
   input: {
-    padding: '0.7rem',
+    padding: '0.6rem',
     borderRadius: '0.5rem',
     border: '1px solid #d1d5db',
-    fontSize: '1rem',
+    fontSize: '0.95rem',
     outline: 'none',
     transition: 'border 0.2s',
   },
@@ -243,8 +285,8 @@ const styles = {
   },
   photoPreview: {
     marginTop: '0.5rem',
-    width: '120px',
-    height: '120px',
+    width: '90px',
+    height: '90px',
     objectFit: 'cover',
     borderRadius: '0.5rem',
     border: '2px solid #6366f1',
